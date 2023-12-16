@@ -27,7 +27,7 @@ import java.io.IOException
 
 
 @Suppress("DEPRECATION")
-class storyadd : AppCompatActivity() {
+class Storyadd : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     var photouri : Uri? = null
     var photoResult = registerForActivityResult(StartActivityForResult()){

@@ -70,7 +70,7 @@ class HomeActivity : AppCompatActivity() {
 
         val addButton = findViewById<ImageButton>(R.id.addButton)
         addButton.setOnClickListener {
-            val intent = Intent(this, storyadd::class.java)
+            val intent = Intent(this, Storyadd::class.java)
             startActivity(intent)
         }
 
