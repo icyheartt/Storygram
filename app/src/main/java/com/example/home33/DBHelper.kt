@@ -1,7 +1,5 @@
-//StoryActivity의 DBHelper
 package com.example.home33
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -12,6 +10,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.util.Arrays
 
 class DBHelper(context: Context?) :
     SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -20,7 +19,7 @@ class DBHelper(context: Context?) :
     init {
         Log.d("con", "db init 실행!!")
         DB_PATH = "/data/data/" + context?.packageName + "/databases/"
-        this.mContext = context
+        this.mContext = context;
         dataBaseCheck()
     }
 
@@ -83,12 +82,11 @@ class DBHelper(context: Context?) :
         onCreate(db)
     }
 
-    @SuppressLint("Range")
     fun getStoryItem(): ArrayList<StoryItem> {
         // val storyList: ArrayList<StoryItem> get() {
-        // SELECT 문 (할일 목록을 조회)
+        // SELECT 문 (스토리 전체 목록을 조회)
         val storyItems: ArrayList<StoryItem> = ArrayList<StoryItem>()
-        val tagList = Array(10, {""})
+        val tagList = Array(10, {""}) // 태그는 최대 10개까지 저장
         val db = this.writableDatabase
         //ORDER BY date DESC
         var cursor = db.rawQuery("SELECT * FROM PostDB ORDER BY id ASC;", null)
@@ -99,6 +97,7 @@ class DBHelper(context: Context?) :
         if (cursor.count != 0) {
             // 조건문 데이터가 있을때 내부 수행
             while (cursor.moveToNext()) {
+                Arrays.fill(tagList, null) // tagList 임시배열 초기화
                 var id = cursor.getInt(cursor.getColumnIndex("id"))
                 var content = cursor.getString(cursor.getColumnIndex("content"))
                 var writeDate = cursor.getString(cursor.getColumnIndex("date"))
@@ -108,33 +107,23 @@ class DBHelper(context: Context?) :
 
                 var cursor1 =
                     db.rawQuery("SELECT * FROM HashtagDB WHERE id = '$id';", null)
-                var idx1 = cursor1.getColumnIndex("name")
-                Log.d("str1", "cursor1 name컬럼 인덱스 : " + idx1)
-                var mtf = cursor1.moveToFirst()
-                Log.d("mtf", "cursor1 movetofirst" + mtf)
-                var value =  cursor1.getString(idx1)
-
-
-                Log.d("str2", "cursor1 name컬럼 인덱스에 있는 값 : " + value)
-                var str : String = cursor1.getColumnName(idx1)
-                Log.d("str3", "cursor1 컬럼 이름 : " + str)
-                Log.d("cor1", "갸아악 cursor1 " + cursor1.getString(cursor1.getColumnIndex(str)))
-                Log.d("cu", "으아아 id 컬럼 인덱스 cursor1 " + cursor1.getColumnIndex("id"))
-                Log.d("cursor1", "cursor1 커서 개수 " + cursor1.count)
-
 
                 var i = 0
                 var close = 0
+
                 if (cursor1 != null && cursor1.moveToFirst()) {
                     while(cursor1.moveToNext()) {
+                        if(i == 0) {
+                            var mtf = cursor1.moveToFirst()
+                            Log.d("mtf", "cursor1 movetofirst" + mtf)
+                        }
                         var str : String = cursor1.getColumnName(cursor1.getColumnIndex("id"))
                         Log.d("str", "cursor1 컬럼 이름 : " + str)
+                        Log.d("cursor1", "왜 안되냐아 cursor1 " + cursor1.getColumnIndex("id")) //id column index = 0
                         var idx = cursor1.getColumnIndex("name")
-                        Log.d("cusor1", "인덱스값! cursor1 " + idx)
+                        Log.d("cusor1", "인덱스값! cursor1 " + idx) // name column index = 1
                         Log.d("tag", "인덱스로부터 name string 가져오기 " + cursor1.getString(idx))
-                        var tag = cursor1.getString(idx)
                         Log.d("i", "cursor1 i 값 출력 : " + i)
-                        Log.d("i[", "cursor1 i인덱스 array값 출력 " +  cursor1.getString(idx))
 
                         i++
                         try {
@@ -146,14 +135,19 @@ class DBHelper(context: Context?) :
                 }
                 var tags : ArrayList<String> = arrayListOf<String>()
                 for(tag in tagList) {
-                    tags.add(tag)
+                    if(tag != null) {
+                        tags.add(tag)
+                        Log.i("tag추가", "tagList로부터 tags에 태그 추가 : " + tag)
+                    }
                 }
-
-                Log.d("storyItem", "storyitem 내용물" + content + " " + writeDate + " " + imageurl)
-                var storyItem = StoryItem(content, writeDate, imageurl, tags)
-                storyItem.setPostContent(content)
-                storyItem.setPostDate(writeDate)
-                storyItem.setPostTag(tags)
+                Arrays.fill(tagList, null)
+                var emList : ArrayList<String> = arrayListOf<String>()
+                Log.d("storyItem", "storyitem 내용물" + content + " " + writeDate + " " + imageurl + " " + tags.toString())
+                var storyItem = StoryItem(content, writeDate, imageurl, emList)
+                for(t in tags) {
+                    Log.d("tag", "setPostTag 하기전 tag 확인 : " + t)
+                }
+                storyItem?.setPostTag(tags)
                 storyItems.add(storyItem)
 
                 tags.clear()
@@ -200,6 +194,8 @@ class DBHelper(context: Context?) :
         }
         db.close()
     }
+
+
 
     companion object {
         private const val DB_VERSION = 1

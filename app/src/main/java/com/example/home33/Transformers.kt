@@ -1,12 +1,11 @@
-package com.example.home33
+package com.example.diaryproject
 
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
-import android.text.style.StrikethroughSpan
+import android.util.Log
 import com.greenfrvr.hashtagview.HashtagView
 import com.greenfrvr.hashtagview.HashtagView.DataStateTransform
 import com.greenfrvr.hashtagview.HashtagView.DataTransform
@@ -23,7 +22,7 @@ class Transformers : DataStateTransform<String> {
             )
             return spannableString
         }
-        // HASH : object 때문에 선언해야함
+        //16번째 줄 object 때문에 선언해야함
         override fun prepareSelected(item: String?): CharSequence {
             val spannableString = SpannableStringBuilder("#$item")
             spannableString.insert(0, item)
@@ -66,17 +65,24 @@ class Transformers : DataStateTransform<String> {
         return spannableString
     }
     // 실제 코드 사용부분 HASH_SELECTED
-    companion object HASH_SELECTED: DataTransform<String> {
-        override fun prepare(item: String?): CharSequence {
-            val spannableString = SpannableStringBuilder("#$item")
-            spannableString.insert(0, item)
+    companion object HASH_SELECTED: HashtagView.DataTransform<String> {
+        override fun prepare(item: String): CharSequence {
+            Log.d("hey","Transformers의 hashselected 실행")
+            if (item != null) {
+                Log.d("item", "Transformers의 item이다 : " + item)
+            }
+            else {
+                Log.d("check", "Transformers의 item이 비었다!")
+            }
+            val spannableString = SpannableStringBuilder("$item")
+            // spannableString.insert(0, item)
             spannableString.setSpan(
-                ForegroundColorSpan(Color.parseColor("red")),
+                ForegroundColorSpan(Color.parseColor("black")),
                 0,
                 spannableString.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-
+            Log.d("sapn","spannable toString " + spannableString.toString())
             return spannableString
         }
     }
