@@ -1,6 +1,8 @@
 package com.example.home33
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,11 +11,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.greenfrvr.hashtagview.HashtagView
 import com.bumptech.glide.Glide
+import com.greenfrvr.hashtagview.HashtagView
 import java.io.File
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import java.io.FileInputStream
 
 
@@ -38,7 +38,7 @@ class StoryAdapter(val storyList: ArrayList<StoryItem>, val context: Context) : 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         var imageUri = storyList.get(position).imageurl // 캐시 저장소에 저장되어 있는 이미지 경로
         var imageName =
-            imageUri.lastIndexOf('/')?.plus(1)?.let { imageUri.substring(it, imageUri.length) }
+            imageUri.lastIndexOf('/').plus(1)?.let { imageUri.substring(it, imageUri.length) }
         // var imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1, imageUri.length);
 
         // 이미지 불러오기

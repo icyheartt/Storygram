@@ -82,22 +82,26 @@ class storyadd : AppCompatActivity() {
             }
             else {
                 //이부분에 DB에다 데이터 전송
-                Glide.with(this)
-                    .asBitmap()
-                    .load(photoResult)
-                    .into(object : SimpleTarget<Bitmap>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: Transition<in Bitmap>?) {
-                            // 이미지가 로드되면 캐시 파일로 저장
-                            saveBitmapToCache(resource)
-                        }
-                    })
-                val dpHelper = DBHelper(this)
+                try {
+                    Glide.with(this)
+                        .asBitmap()
+                        .load(photoResult)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?) {
+                                // 이미지가 로드되면 캐시 파일로 저장
+                                saveBitmapToCache(resource)
+                            }
+                        })
+                    val dpHelper = DBHelper(this)
+                    //여기에 dbHelper 메소드 삽입
+                    finish()
+                } catch (e: Exception) {
 
-                finish()
                 }
             }
+        }
 
         previous.setOnClickListener {
             viewFlipper.showPrevious()
