@@ -1,4 +1,4 @@
-package com.example.diaryproject
+package com.example.home33
 
 import android.graphics.Color
 import android.text.SpannableString
