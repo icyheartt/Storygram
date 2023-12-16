@@ -20,7 +20,7 @@ class DBHelper(context: Context?) :
     init {
         Log.d("con", "db init 실행!!")
         DB_PATH = "/data/data/" + context?.packageName + "/databases/"
-        this.mContext = context;
+        this.mContext = context
         dataBaseCheck()
     }
 
@@ -151,9 +151,9 @@ class DBHelper(context: Context?) :
 
                 Log.d("storyItem", "storyitem 내용물" + content + " " + writeDate + " " + imageurl)
                 var storyItem = StoryItem(content, writeDate, imageurl, tags)
-                storyItem?.setPostContent(content)
-                storyItem?.setPostDate(writeDate)
-                storyItem?.setPostTag(tags)
+                storyItem.setPostContent(content)
+                storyItem.setPostDate(writeDate)
+                storyItem.setPostTag(tags)
                 storyItems.add(storyItem)
 
                 tags.clear()

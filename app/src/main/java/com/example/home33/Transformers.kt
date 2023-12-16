@@ -66,7 +66,7 @@ class Transformers : DataStateTransform<String> {
         return spannableString
     }
     // 실제 코드 사용부분 HASH_SELECTED
-    companion object HASH_SELECTED: HashtagView.DataTransform<String> {
+    companion object HASH_SELECTED: DataTransform<String> {
         override fun prepare(item: String?): CharSequence {
             val spannableString = SpannableStringBuilder("#$item")
             spannableString.insert(0, item)

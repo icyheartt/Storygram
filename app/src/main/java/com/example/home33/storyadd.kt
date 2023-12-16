@@ -2,6 +2,7 @@ package com.example.home33
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.View.INVISIBLE
@@ -13,21 +14,44 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TimePicker
 import android.widget.ViewFlipper
-import androidx.activity.result.contract.ActivityResultContracts
-import com.greenfrvr.hashtagview.HashtagView
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.greenfrvr.hashtagview.HashtagView
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
+@Suppress("DEPRECATION")
 class storyadd : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     var photouri : Uri? = null
-    var photoResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    var photoResult = registerForActivityResult(StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
             photouri = it.data?.data
 
         }
     }
+
+    private fun saveBitmapToCache(bitmap: Bitmap) {
+        val file = File(cacheDir, "cached_image.jpg")
+
+        try {
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+            // 이미지의 경로(file.absolutePath)를 사용하면 됩니다.
+            val imagePath = file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +100,17 @@ class storyadd : AppCompatActivity() {
             val photoPickerintent = Intent(Intent.ACTION_PICK)
             photoPickerintent.type = "image/*"
             photoResult.launch(photoPickerintent)
-            }
+            Glide.with(this)
+                .asBitmap()
+                .load(photoResult)
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?) {
+                        // 이미지가 로드되면 캐시 파일로 저장
+                        saveBitmapToCache(resource)
+                    }
+                })
         }
     }
+}

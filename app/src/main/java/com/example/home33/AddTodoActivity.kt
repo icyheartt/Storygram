@@ -73,7 +73,7 @@ class AddTodoActivity : Activity() {
                 val newTodoItemId = dbHelper.insertTodoItem(dueDate, todoTask, false)
                 val resultIntent = Intent()
                 resultIntent.putExtra("newTodoItemId", newTodoItemId.toInt())
-                setResult(Activity.RESULT_OK, resultIntent)
+                setResult(RESULT_OK, resultIntent)
             }
             finish()
         }

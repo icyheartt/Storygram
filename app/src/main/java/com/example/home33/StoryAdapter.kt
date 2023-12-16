@@ -38,7 +38,7 @@ class StoryAdapter(val storyList: ArrayList<StoryItem>, val context: Context) : 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         var imageUri = storyList.get(position).imageurl // 캐시 저장소에 저장되어 있는 이미지 경로
         var imageName =
-            imageUri?.lastIndexOf('/')?.plus(1)?.let { imageUri.substring(it, imageUri.length) };
+            imageUri.lastIndexOf('/')?.plus(1)?.let { imageUri.substring(it, imageUri.length) }
         // var imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1, imageUri.length);
 
         // 이미지 불러오기
