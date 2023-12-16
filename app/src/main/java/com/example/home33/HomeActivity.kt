@@ -1,5 +1,6 @@
 package com.example.home33
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -34,43 +35,43 @@ class HomeActivity : AppCompatActivity() {
 
         val homeButton = findViewById<ImageButton>(R.id.homeButton)
         homeButton.setOnClickListener {
-            //val intent = Intent(this, homeActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
         }
 
         val calendarButton = findViewById<ImageButton>(R.id.calendarButton)
         calendarButton.setOnClickListener {
-            //val intent = Intent(this, calendarActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, CalendarActivity::class.java)
+            startActivity(intent)
         }
 
         val storyButton = findViewById<ImageButton>(R.id.storyButton)
         storyButton.setOnClickListener {
-            //val intent = Intent(this, storyActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, StoryActivity::class.java)
+            startActivity(intent)
         }
 
         val todolistButton = findViewById<ImageButton>(R.id.todolistButton)
         todolistButton.setOnClickListener {
-            //val intent = Intent(this, todolistActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, TodoActivity::class.java)
+            startActivity(intent)
         }
 
         val reminderButton = findViewById<ImageButton>(R.id.reminderButton)
         reminderButton.setOnClickListener {
-            //val intent = Intent(this, reminderActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, ReminderMainActivity::class.java)
+            startActivity(intent)
         }
 
         val exitButton = findViewById<ImageButton>(R.id.exitButton)
         exitButton.setOnClickListener {
-            //finish()
+            finish()
         }
 
         val addButton = findViewById<ImageButton>(R.id.addButton)
         addButton.setOnClickListener {
-            //val intent = Intent(this, AddActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(this, storyadd::class.java)
+            startActivity(intent)
         }
 
         val postToAdd = Post(
