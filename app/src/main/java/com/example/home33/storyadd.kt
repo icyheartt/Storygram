@@ -82,6 +82,19 @@ class storyadd : AppCompatActivity() {
             }
             else {
                 //이부분에 DB에다 데이터 전송
+                Glide.with(this)
+                    .asBitmap()
+                    .load(photoResult)
+                    .into(object : SimpleTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?) {
+                            // 이미지가 로드되면 캐시 파일로 저장
+                            saveBitmapToCache(resource)
+                        }
+                    })
+                val dpHelper = DBHelper(this)
+
                 finish()
                 }
             }
@@ -100,17 +113,7 @@ class storyadd : AppCompatActivity() {
             val photoPickerintent = Intent(Intent.ACTION_PICK)
             photoPickerintent.type = "image/*"
             photoResult.launch(photoPickerintent)
-            Glide.with(this)
-                .asBitmap()
-                .load(photoResult)
-                .into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: Transition<in Bitmap>?) {
-                        // 이미지가 로드되면 캐시 파일로 저장
-                        saveBitmapToCache(resource)
-                    }
-                })
+
         }
     }
 }
