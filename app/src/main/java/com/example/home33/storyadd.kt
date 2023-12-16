@@ -84,6 +84,7 @@ class storyadd : AppCompatActivity() {
             else {
                 //이부분에 DB에다 데이터 전송
                 try {
+                    //이미지 캐싱
                     Glide.with(this)
                         .asBitmap()
                         .load(photoResult)
