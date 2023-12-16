@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TimePicker
+import android.widget.Toast
 import android.widget.ViewFlipper
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
@@ -98,7 +99,7 @@ class storyadd : AppCompatActivity() {
                     //여기에 dbHelper 메소드 삽입
                     finish()
                 } catch (e: Exception) {
-
+                    var errMsg = Toast.makeText(applicationContext, "모든 데이터를 기재해주세요.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
