@@ -35,7 +35,7 @@ android {
     }
     buildToolsVersion = "34.0.0"
     buildFeatures{
-        dataBinding; true
+        dataBinding = true
     }
     dependenciesInfo {
         includeInApk = false
