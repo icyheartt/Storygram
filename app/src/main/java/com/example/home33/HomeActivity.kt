@@ -19,7 +19,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        dateTextView = findViewById(R.id.dateTextView)
+        dateTextView = findViewById(R.id.dateTextView1)
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val menuButton = findViewById<ImageButton>(R.id.menuButton)
         val customLayout = findViewById<LinearLayout>(R.id.customLayout)
