@@ -67,52 +67,28 @@ class StoryAdapter(val storyList: ArrayList<StoryItem>, val context: Context) : 
            } catch (e: Exception) {
                Log.d("userimage", "user-image 파일 로드 실패")
            }*/
-        Log.d("width","hashtagWidth : " + holder.hashtag.width)
-        holder.hashtag.width
-        var immutableList : List<String> = listOf("태그", "안보이기만해봐라")
+
         var taglist = mutableListOf<String>()
         taglist.clear()
         holder.feed.setImageResource(R.drawable.feed2)
-        holder.userimage.setImageResource(R.mipmap.ic_launcher_round)
+        holder.userimage.setImageResource(R.mipmap.ic_launcher_round) // 임시 사진
         holder.content.text = storyList.get(position).content
         holder.date.text = storyList.get(position).date
         var tags = storyList.get(position).tag
 
         if (tags != null) {
             for(tag in tags) {
-                if(holder.hashtag.addItem(tag)) Log.d("tag,", "tag addItem 추가 성공!!")
                 taglist.add(tag)
-                Log.d("태그", "tagList에 차곡차곡 tag 넣는중" + tag)
-
             }
-
         }
 
-        for(li in taglist) {
-            Log.d("hh","taglist 비어서 그렇냐 : " + li)
-        }
         try {
-
             holder.hashtag.setData(taglist, Transformers.HASH_SELECTED)
             holder.hashtag.setItemTextColor(RED)
-
-            // holder.hashtag.setData(immutableList, Transformers.HASH_SELECTED)
-            Log.d("hashtag", "hashtag 로드 성공!!")
-
-            //holder.hashtag.addItem(taglist)
-            var list = holder.hashtag.getData<String>()
-            if(list == null) Log.d("list", "setData 비었다")
-            for(l in list) {
-                Log.d("list", "hashtag의 setData가 원할하게 작동하냐 : " + l)
-            }
-
-
         } catch (e: Exception) {
             Log.d("hashtag", "hashtag 로드 실패")
             e.printStackTrace()
         }
-
-
     }
 
     class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -29,6 +29,7 @@ import java.io.IOException
 @Suppress("DEPRECATION")
 class storyadd : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
+    var imagePath: String? = null
     var photouri : Uri? = null
     var photoResult = registerForActivityResult(StartActivityForResult()){
         if(it.resultCode == RESULT_OK){
@@ -52,7 +53,9 @@ class storyadd : AppCompatActivity() {
             e.printStackTrace()
         }
 
-}
+
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +101,8 @@ class storyadd : AppCompatActivity() {
                         })
                     val dpHelper = DBHelper(this)
                     //여기에 dbHelper 메소드 삽입
+                    val item = StoryItem(comment.toString(), calendar1.date.toString(), imagePath, )
+                    dpHelper.insertStory(item)
                     finish()
                 } catch (e: Exception) {
                     var errMsg = Toast.makeText(applicationContext, "모든 데이터를 기재해주세요.", Toast.LENGTH_SHORT).show()

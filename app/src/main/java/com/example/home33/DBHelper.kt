@@ -1,5 +1,6 @@
 package com.example.home33
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -82,18 +83,17 @@ class DBHelper(context: Context?) :
         onCreate(db)
     }
 
+    @SuppressLint("Range")
     fun getStoryItem(): ArrayList<StoryItem> {
         // val storyList: ArrayList<StoryItem> get() {
         // SELECT 문 (스토리 전체 목록을 조회)
         val storyItems: ArrayList<StoryItem> = ArrayList<StoryItem>()
         val tagList = Array(10, {""}) // 태그는 최대 10개까지 저장
         val db = this.writableDatabase
-        //ORDER BY date DESC
-        var cursor = db.rawQuery("SELECT * FROM PostDB ORDER BY id ASC;", null)
-        var cursor_cnt = db.rawQuery("SELECT COUNT (*) FROM HashtagDB;", null)
-        var cnt = cursor_cnt.count
-        var i = 0
-        //var cursor1: Cursor? = null
+        var cursor = db.rawQuery("SELECT * FROM PostDB ORDER BY date DESC;", null)  // id ASC;
+        var cursor_cnt = db.rawQuery("SELECT COUNT (*) AS cnt FROM HashtagDB;", null)
+        var cnt = cursor_cnt.getInt(cursor_cnt.getColumnIndex("cnt"))
+        Log.i("cnt", "cnt : " + cnt)
         if (cursor.count != 0) {
             // 조건문 데이터가 있을때 내부 수행
             while (cursor.moveToNext()) {
@@ -102,8 +102,6 @@ class DBHelper(context: Context?) :
                 var content = cursor.getString(cursor.getColumnIndex("content"))
                 var writeDate = cursor.getString(cursor.getColumnIndex("date"))
                 var imageurl = cursor.getString(cursor.getColumnIndex("imageurl"))
-                Log.d("cusor1", "왜1!!!! cursor " + cursor.getColumnIndex("id"))
-                Log.d("cusor1", "왜값! cursor " + cursor.getInt(cursor.getColumnIndex("id")))
 
                 var cursor1 =
                     db.rawQuery("SELECT * FROM HashtagDB WHERE id = '$id';", null)
@@ -113,18 +111,13 @@ class DBHelper(context: Context?) :
 
                 if (cursor1 != null && cursor1.moveToFirst()) {
                     while(cursor1.moveToNext()) {
-                        if(i == 0) {
+                        if(i == 0) { // 첫번째 데이터 인식하기 위해 moveToFirst() 사용
                             var mtf = cursor1.moveToFirst()
-                            Log.d("mtf", "cursor1 movetofirst" + mtf)
+                            Log.d("mtf", "cursor1 movetofirst" + mtf) // 내부에 데이터 존재하면 mtf true 반환
                         }
-                        var str : String = cursor1.getColumnName(cursor1.getColumnIndex("id"))
-                        Log.d("str", "cursor1 컬럼 이름 : " + str)
-                        Log.d("cursor1", "왜 안되냐아 cursor1 " + cursor1.getColumnIndex("id")) //id column index = 0
                         var idx = cursor1.getColumnIndex("name")
-                        Log.d("cusor1", "인덱스값! cursor1 " + idx) // name column index = 1
-                        Log.d("tag", "인덱스로부터 name string 가져오기 " + cursor1.getString(idx))
-                        Log.d("i", "cursor1 i 값 출력 : " + i)
-
+                        Log.d("cusor1", "cursor1 name column index" + idx) // name column index = 1
+                        Log.d("tag", "cursor1의 name컬럼 string 가져오기 " + cursor1.getString(idx))
                         i++
                         try {
                             tagList[i] = cursor1.getString(idx)
@@ -133,20 +126,18 @@ class DBHelper(context: Context?) :
                         }
                     }
                 }
+                // tagList는 Array, tags는 ArrayList => ArrayList에서 인덱스를 통한 수정 기능 동작 어려움, 추가된 항목의 인덱스 문제 등으로 임의의 Array배열 tagList 만듬
                 var tags : ArrayList<String> = arrayListOf<String>()
                 for(tag in tagList) {
                     if(tag != null) {
                         tags.add(tag)
-                        Log.i("tag추가", "tagList로부터 tags에 태그 추가 : " + tag)
                     }
                 }
                 Arrays.fill(tagList, null)
                 var emList : ArrayList<String> = arrayListOf<String>()
                 Log.d("storyItem", "storyitem 내용물" + content + " " + writeDate + " " + imageurl + " " + tags.toString())
+                // storyItem 매개변수 전달해서 생성자 호출할때 ArrayList끼리 얕은 복사가 발생하므로 setPostTag()함수를 만들어 따로 깊은 복사 구현
                 var storyItem = StoryItem(content, writeDate, imageurl, emList)
-                for(t in tags) {
-                    Log.d("tag", "setPostTag 하기전 tag 확인 : " + t)
-                }
                 storyItem?.setPostTag(tags)
                 storyItems.add(storyItem)
 
@@ -161,13 +152,13 @@ class DBHelper(context: Context?) :
         return storyItems
     }
 
-    fun insertStory(storyItem : ArrayList<StoryItem>) {
+    fun insertStory(storyItem: StoryItem) {
         val db : SQLiteDatabase = this.writableDatabase
         var cursor = db.rawQuery("select id from PostDB ORDER BY id DESC LIMIT 1;", null)
 
         db.beginTransaction()
         try {
-            for(story in storyItem) {
+            for(story in storyItem.to_ArrayList()) {
                 var content: String? = story.content
                 var date: String? = story.date
                 var imageurl: String? = story.imageurl

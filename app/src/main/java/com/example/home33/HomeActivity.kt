@@ -3,6 +3,7 @@ package com.example.home33
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,17 +14,20 @@ import java.util.Date
 import java.util.TimeZone
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var dateTextView: TextView
-    private val databaseManager = DatabaseManager(this)
+    private lateinit var DateView: TextView
+    private lateinit var customLayout: LinearLayout
+    private lateinit var dbHelper: DBHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        dateTextView = findViewById(R.id.dateTextView1)
+        DateView = findViewById(R.id.DateView)
+        customLayout = findViewById(R.id.customLayout)
+        dbHelper = DBHelper(this)
+
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val menuButton = findViewById<ImageButton>(R.id.menuButton)
-        val customLayout = findViewById<LinearLayout>(R.id.customLayout)
 
         menuButton.setOnClickListener {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -74,37 +78,57 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val postToAdd = Post(
-            id = 0,
-            title = "오늘의 일기",
-            content = "잠을 못잤다",
-            date = "2023/05/07",
-            tag = "#불면증",
-            imageUrl = "이미지 URL"
-        )
-
-        databaseManager.addPost(postToAdd)
-
-        val latestPost = databaseManager.getLatestPost()
-
-        if (latestPost != null) {
-            findViewById<TextView>(R.id.dateTextView1).text = latestPost.date
-            findViewById<TextView>(R.id.tagsTextView1).text = latestPost.tag
-            findViewById<TextView>(R.id.contentTextView1).text = latestPost.content
-        } else {
-            val errorMessage = "최신 포스트를 불러올 수 없습니다."
-            findViewById<TextView>(R.id.dateTextView1).text = errorMessage
-        }
+        displayDiaryEntries()
     }
 
     override fun onResume() {
         super.onResume()
 
+        displayDiaryEntries()
+        // 현재 날짜 표시
         val timeZone = TimeZone.getDefault()
         val sdf = SimpleDateFormat("yyyy/MM/dd")
         sdf.timeZone = timeZone
-
         val currentDate = sdf.format(Date())
-        dateTextView.text = currentDate
+        findViewById<TextView>(R.id.DateView).text = currentDate
+    }
+
+    private fun displayDiaryEntries() {
+        // 데이터베이스에서 스토리 엔트리 가져오기
+        val entries: ArrayList<StoryItem> = dbHelper.getStoryItem()
+
+        // LinearLayout 찾기
+        val linearLayout = findViewById<LinearLayout>(R.id.diaryLayout)
+
+        linearLayout.removeAllViews()
+
+        if (entries.isEmpty()) {
+            // 데이터베이스에 저장된 정보가 없을 경우
+            val noDataTextView = TextView(this)
+            noDataTextView.text = "어서 글을 작성해 보세요!"
+            linearLayout.addView(noDataTextView)
+        } else {
+            // 가져온 스토리 엔트리를 UI에 동적으로 추가
+            for (entry in entries) {
+                // 새로운 레이아웃 인플레이트
+                val childLayout = layoutInflater.inflate(R.layout.home_entry, null)
+
+                // TextView와 ImageView 찾기
+                val dateTextView = childLayout.findViewById<TextView>(R.id.dateTextView)
+                val tagsTextView = childLayout.findViewById<TextView>(R.id.tagsTextView)
+                val contentTextView = childLayout.findViewById<TextView>(R.id.contentTextView)
+                val photoImageView = childLayout.findViewById<ImageView>(R.id.photoImageView)
+
+                dateTextView.text = entry.date
+                tagsTextView.text = entry.tag?.joinToString(" ") { "#$it" } ?: ""
+                contentTextView.text = entry.content
+
+                // 이미지 로딩 (Glide 등 사용)
+                //Glide.with(this).load(entry.imageUrl).into(photoImageView)
+
+                // LinearLayout에 추가
+                linearLayout.addView(childLayout)
+            }
+        }
     }
 }

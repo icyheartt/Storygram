@@ -67,13 +67,6 @@ class Transformers : DataStateTransform<String> {
     // 실제 코드 사용부분 HASH_SELECTED
     companion object HASH_SELECTED: HashtagView.DataTransform<String> {
         override fun prepare(item: String): CharSequence {
-            Log.d("hey","Transformers의 hashselected 실행")
-            if (item != null) {
-                Log.d("item", "Transformers의 item이다 : " + item)
-            }
-            else {
-                Log.d("check", "Transformers의 item이 비었다!")
-            }
             val spannableString = SpannableStringBuilder("$item")
             // spannableString.insert(0, item)
             spannableString.setSpan(
