@@ -4,14 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.View
 import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Switch
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.home33.databinding.TodoActivityMainBinding
@@ -27,10 +27,20 @@ class TodoActivity : AppCompatActivity() {
     private lateinit var futureTodoItem: MutableList<TodoItem>
     private lateinit var pastTodoItem: MutableList<TodoItem>
 
+    // 날짜 범위 계산
+    private val currentDate = LocalDate.now()
+    private val tomorrowDate = currentDate.plusDays(1)
+    private val futureStartDate = currentDate.plusDays(2) // 오늘로부터 2일 이상 이후
+    private val pastEndDate = currentDate.minusDays(1) // 오늘 이전
+
+    // 날짜 형식 지정
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     private val dbHelper = TodoDBHelper(this)
 
     companion object {
-        const val ADD_TODO_REQUEST_CODE = 1 // 아무 정수나 사용 가능
+        const val ADD_TODO_REQUEST_CODE = 1 // 아무 정수나 사용 가능 => 구별 위함
+        const val EDIT_TODO_REQUEST_CODE = 2
     }
 
     //todo_activity_main.xml의 전체 레이아웃을 참조
@@ -59,16 +69,6 @@ class TodoActivity : AppCompatActivity() {
 
         // 카드뷰에 나타날 날짜 형식
         val cardViewFormatter = DateTimeFormatter.ofPattern("MM/dd(EEE)")
-
-        // 날짜 범위 계산
-        val currentDate = LocalDate.now()
-        val tomorrowDate = currentDate.plusDays(1)
-        val futureStartDate = currentDate.plusDays(2) // 오늘로부터 2일 이상 이후
-        val pastEndDate = currentDate.minusDays(1) // 오늘 이전
-
-        // 날짜 형식 지정
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
 
         // 오늘 날짜를 TextView에 설정
         val todayDateTextView: TextView = findViewById(R.id.todayDateTextView)
@@ -115,20 +115,53 @@ class TodoActivity : AppCompatActivity() {
                 val newTodoItem = dbHelper.getTodoItemById(newTodoItemId)
                 addTodoItemToAppropriateList(newTodoItem)
             }
+        } else if (requestCode == EDIT_TODO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // 수정 모드 처리
+            val editedTodoItemId = data?.getIntExtra("editedTodoItemId", -1)
+            if (editedTodoItemId != null && editedTodoItemId != -1) {
+                val editedTodoItem = dbHelper.getTodoItemById(editedTodoItemId)
+                editTodoItemToAppropriateList(editedTodoItem)
+            }
         }
-
-
     }
 
+    //해당하는 날짜의 리스트에 항목 추가
+    private fun editTodoItemToAppropriateList(editedTodoItem: TodoItem) {
+        when (editedTodoItem.date) {
+            currentDate.format(formatter) -> {
+                val index = todayTodoItem.indexOfFirst { it.id == editedTodoItem.id }
+                if (index != -1) {
+                    todayTodoItem[index] = editedTodoItem
+                    populateTodoItems(binding.todoLinearLayout1, todayTodoItem)
+                }
+            }
+            tomorrowDate.format(formatter) -> {
+                val index = tomorrowTodoItem.indexOfFirst { it.id == editedTodoItem.id }
+                if (index != -1) {
+                    tomorrowTodoItem[index] = editedTodoItem
+                    populateTodoItems(binding.todoLinearLayout2, tomorrowTodoItem)
+                }
+            }
+            in (futureStartDate.format(formatter)).."9999-12-31" -> {
+                val index = futureTodoItem.indexOfFirst { it.id == editedTodoItem.id }
+                if (index != -1) {
+                    futureTodoItem[index] = editedTodoItem
+                    populateTodoItems(binding.todoLinearLayout3, futureTodoItem)
+                }
+            }
+            in "0001-01-01" .. (pastEndDate.format(formatter)) -> {
+                val index = pastTodoItem.indexOfFirst { it.id == editedTodoItem.id }
+                if (index != -1) {
+                    pastTodoItem[index] = editedTodoItem
+                    populateTodoItems(binding.todoLinearLayout4, pastTodoItem)
+                }
+            }
+        }
+    }
+
+
+    //해당하는 날짜의 리스트에 항목 추가
     private fun addTodoItemToAppropriateList(newTodoItem: TodoItem) {
-        val currentDate = LocalDate.now()
-        val tomorrowDate = currentDate.plusDays(1)
-        val futureStartDate = currentDate.plusDays(2)
-        val pastEndDate = currentDate.minusDays(1)
-
-        // 날짜 형식 지정
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
         when (newTodoItem.date) {
             currentDate.format(formatter) -> {
                 todayTodoItem.add(newTodoItem)
@@ -149,6 +182,7 @@ class TodoActivity : AppCompatActivity() {
         }
     }
 
+    //카드뷰 열고 닫기
     private fun setupToggleView(
         triggerView: View,
         detailLayout: View,
@@ -175,6 +209,7 @@ class TodoActivity : AppCompatActivity() {
         }
     }
 
+    //할일 리스트 추가
     private fun populateTodoItems(linearLayout: LinearLayout, todoItems: MutableList<TodoItem>) {
         linearLayout.removeAllViews()
 
@@ -212,9 +247,7 @@ class TodoActivity : AppCompatActivity() {
                 val editIntent = Intent(this, AddTodoActivity::class.java)
                 editIntent.putExtra("mode", "edit")
                 editIntent.putExtra("itemId", itemId)  // 수정할 아이템의 ID 전달
-                startActivity(editIntent)
-                val index = todoItems.indexOfFirst { it.id == itemId }
-                if (index != -1) todoItems[index] = dbHelper.getTodoItemById(itemId)
+                startActivityForResult(editIntent, EDIT_TODO_REQUEST_CODE)
             }
 
             // 삭제 버튼에 대한 클릭 리스너
@@ -240,7 +273,6 @@ class TodoActivity : AppCompatActivity() {
                 // 다이얼로그 표시
                 alertDialog.show()
             }
-            i++
 
         }
     }
