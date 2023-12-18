@@ -1,26 +1,51 @@
 package com.example.home33
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
+
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var DateView: TextView
     private lateinit var customLayout: LinearLayout
     private lateinit var dbHelper: DBHelper
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
+
+        TedPermission.create()
+            .setPermissionListener(object : PermissionListener {
+                override fun onPermissionGranted() {
+                    Toast.makeText(this@HomeActivity, "권한 허가", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onPermissionDenied(deniedPermissions: List<String>) {
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "권한 거부\n$deniedPermissions",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+            .setDeniedMessage("스토리 사진을 보기 위해서는 갤러리 접근 권한이 필요해요\n\n[설정] > [권한]에서 권한을 허용하실 수 있어요.")
+            .setPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+            .check();
 
         DateView = findViewById(R.id.DateView)
         customLayout = findViewById(R.id.customLayout)
@@ -75,7 +100,7 @@ class HomeActivity : AppCompatActivity() {
 
         val addButton = findViewById<ImageButton>(R.id.addButton)
         addButton.setOnClickListener {
-            val intent = Intent(this, storyadd::class.java)
+            val intent = Intent(this, StoryAdd::class.java)
             startActivity(intent)
         }
 
@@ -122,7 +147,7 @@ class HomeActivity : AppCompatActivity() {
                 val photoImageView = childLayout.findViewById<ImageView>(R.id.photoImageView)
 
                 dateTextView.text = entry.date
-                tagsTextView.text = entry.tag?.joinToString(" ") { "#$it" } ?: ""
+                tagsTextView.text = entry.tag?.joinToString(" ") { "$it" } ?: ""
                 contentTextView.text = entry.content
 
                 // 이미지 로딩 (Glide 등 사용)
@@ -132,5 +157,8 @@ class HomeActivity : AppCompatActivity() {
                 linearLayout.addView(childLayout)
             }
         }
+    }
+    companion object {
+        const val REQ_PERMISSION_MAIN = 1001
     }
 }

@@ -29,7 +29,7 @@ import java.io.IOException
 
 
 @Suppress("DEPRECATION")
-class storyadd : AppCompatActivity() {
+class StoryAdd : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     var imagePath: String? = null
     var photouri : Uri? = null
@@ -115,7 +115,7 @@ class storyadd : AppCompatActivity() {
         var previous = findViewById<Button>(R.id.Storyadd_Button_previous)
 
         btnBack2.setOnClickListener {
-                finish()
+            finish()
         }
 
         next.setOnClickListener {
