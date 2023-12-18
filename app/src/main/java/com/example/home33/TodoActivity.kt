@@ -1,20 +1,20 @@
 package com.example.home33
-/*
+
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.view.View
 import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Switch
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-
+import com.example.home33.databinding.TodoActivityMainBinding
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -308,4 +308,3 @@ class TodoActivity : AppCompatActivity() {
         }
     }
 }
-*/

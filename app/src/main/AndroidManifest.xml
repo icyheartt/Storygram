@@ -22,11 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.cookandroid.diary_recyclerview.AddTodoActivity" />
-        <activity android:name="com.cookandroid.add_todolist.storyadd" />
-        <activity android:name="com.cookandroid.diary_recyclerview.TodoActivity" />
-        <activity android:name="com.example.storyactivity.StoryActivity" />
-        <activity android:name="Post" />
+        <activity android:name=".AddTodoActivity" />
+        <activity android:name=".storyadd" />
+        <activity android:name=".StoryActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".TodoActivity" />
+        <activity android:name=".ReminderMainActivity"/>
         
     </application>
 
