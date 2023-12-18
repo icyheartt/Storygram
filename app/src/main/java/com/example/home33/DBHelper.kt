@@ -91,8 +91,9 @@ class DBHelper(context: Context?) :
         val tagList = Array(10, {""}) // 태그는 최대 10개까지 저장
         val db = this.writableDatabase
         var cursor = db.rawQuery("SELECT * FROM PostDB ORDER BY date DESC;", null)  // id ASC;
-        var cursor_cnt = db.rawQuery("SELECT COUNT (*) AS cnt FROM HashtagDB;", null)
-        var cnt = cursor_cnt.getInt(cursor_cnt.getColumnIndex("cnt"))
+        var cursor_cnt = db.rawQuery("select count(*) from HashtagDB;", null)
+        cursor_cnt.moveToFirst()
+        var cnt = cursor_cnt.getInt(0)
         Log.i("cnt", "cnt : " + cnt)
         if (cursor.count != 0) {
             // 조건문 데이터가 있을때 내부 수행

@@ -26,6 +26,7 @@ class HomeActivity : AppCompatActivity() {
         customLayout = findViewById(R.id.customLayout)
         dbHelper = DBHelper(this)
 
+
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val menuButton = findViewById<ImageButton>(R.id.menuButton)
 
@@ -54,13 +55,13 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, StoryActivity::class.java)
             startActivity(intent)
         }
-
-        val todolistButton = findViewById<ImageButton>(R.id.todolistButton)
-        todolistButton.setOnClickListener {
-            val intent = Intent(this, TodoActivity::class.java)
-            startActivity(intent)
-        }
-
+        /*
+                val todolistButton = findViewById<ImageButton>(R.id.todolistButton)
+                todolistButton.setOnClickListener {
+                    val intent = Intent(this, TodoActivity::class.java)
+                    startActivity(intent)
+                }
+        */
         val reminderButton = findViewById<ImageButton>(R.id.reminderButton)
         reminderButton.setOnClickListener {
             val intent = Intent(this, ReminderMainActivity::class.java)
@@ -94,6 +95,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun displayDiaryEntries() {
+        dbHelper = DBHelper(this)
         // 데이터베이스에서 스토리 엔트리 가져오기
         val entries: ArrayList<StoryItem> = dbHelper.getStoryItem()
 
