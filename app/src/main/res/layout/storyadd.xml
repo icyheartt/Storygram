@@ -67,16 +67,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <com.greenfrvr.hashtagview.HashtagView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/Storyadd_HashtagView_addtag"
-                />
 
-            </ScrollView>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_tag"
+                android:hint="(#여행 #공부)와 같은 식으로 써주세요."/>
+
         </LinearLayout>
     </ViewFlipper>
 
